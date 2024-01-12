@@ -1,6 +1,6 @@
 /* import theme from "../../theme/theme"; */
+import { View } from "react-native";
 import TextStyled from "../../components/TextStyled";
-import SimpleLayout from "../../components/layouts/SimpleLayout";
 
 export default function Register() {
   return (
