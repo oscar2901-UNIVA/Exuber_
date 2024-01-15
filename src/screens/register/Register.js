@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import { View, Text, TextInput, Button, TouchableWithoutFeedback, Keyboard } from "react-native";
 import Picker from "../../components/atoms/picker/Picker";
 import TextStyled from "../../components/TextStyled";
 import { Controller, useForm } from "react-hook-form";
@@ -7,20 +7,25 @@ import InputPrimary from "../../components/atoms/inputs/InputPrimary";
 import { useNavigation } from "@react-navigation/native";
 import PasswordInput from "../../components/atoms/inputs/PasswordInput";
 import ButtonPrimary from "../../components/atoms/buttons/ButtonPrimary";
+import { useDispatch } from "react-redux";
+import { createNightclub } from "../../reduxStore/features/nightClub/nightClubSlice";
+import {
+  createUsers,
+  getUsers,
+} from "../../reduxStore/features/user/userSlice";
+import SimpleLayout from "../../components/layouts/SimpleLayout";
 
 const Register = () => {
   const [userType, setUserType] = useState("normal");
   const { control, handleSubmit, setValue } = useForm();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const onSubmit = (data) => {
-    const { password, confirmPassword, ...rest } = data;
-    if (password === confirmPassword) {
-      console.log("Contraseñas coinciden. Registrando usuario:", rest);
-      console.log("datos registro",data)
-    } else {
-      console.log("Las contraseñas no coinciden");
-    }
+    /*  console.log("datos registro", data); */
+    dispatch(createUsers(data));
+    dispatch(getUsers());
+    navigation.navigate("Home");
   };
 
   const userTypeOptions = [
@@ -29,55 +34,45 @@ const Register = () => {
   ];
 
   return (
-    <View style={{ padding: 20, flex: 1 }}>
-      <Picker
-        label="Tipo de Usuario:"
-        selectedValue={userType}
-        onValueChange={(itemValue) => setUserType(itemValue)}
-        options={userTypeOptions}
-      />
+    <SimpleLayout hasScroll={false} style={{ paddingHorizontal: 5 }}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={{ padding: 20, flex: 1 }}>
+        <Picker
+          label="Tipo de Usuario:"
+          selectedValue={userType}
+          onValueChange={(itemValue) => setUserType(itemValue)}
+          options={userTypeOptions}
+          disable
+        />
 
-      <Controller
-        control={control}
-        render={({ field }) => (
-          <InputPrimary
-            placeholder="Nombre de Usuario"
-            control={control}
-            name="email"
-            onChangeText={(text) => setValue("email", text)}
-          />
-        )}
-        name="email"
-        defaultValue=""
-      />
-      <Controller
-        control={control}
-        render={({ field }) => (
-          <PasswordInput
-            placeholder="Contraseña"
-            control={control}
-            name="password"
-            onChangeText={(text) => setValue("password", text)}
-          />
-        )}
-        name="password"
-        defaultValue=""
-      />
-      <Controller
-        control={control}
-        render={({ field }) => (
-          <PasswordInput
-            placeholder="Confirmar Contraseña"
-            control={control}
-            name="confirmPassword"
-            onChangeText={(text) => setValue("confirmPassword", text)}
-          />
-        )}
-        name="confirmPassword"
-        defaultValue=""
-      />
+        <Controller
+          control={control}
+          render={({ field }) => (
+            <InputPrimary
+              placeholder="Nombre de Usuario"
+              control={control}
+              name="username"
+              onChangeText={(text) => setValue("username", text)}
+            />
+          )}
+          name="username"
+          defaultValue=""
+        />
+        <Controller
+          control={control}
+          render={({ field }) => (
+            <PasswordInput
+              placeholder="Contraseña"
+              control={control}
+              name="password"
+              onChangeText={(text) => setValue("password", text)}
+            />
+          )}
+          name="password"
+          defaultValue=""
+        />
 
-      {userType === "nightclub" && (
+        {/* {userType === "nightclub" && (
         <View>
           <Controller
             control={control}
@@ -132,14 +127,16 @@ const Register = () => {
             defaultValue=""
           />
         </View>
-      )}
+      )} */}
 
-      <ButtonPrimary
-        title="register"
-        text="Registrarse"
-        onPress={handleSubmit(onSubmit)}
-      />
-    </View>
+        <ButtonPrimary
+          title="register"
+          text="Registrarse"
+          onPress={handleSubmit(onSubmit)}
+        />
+      </View>
+      </TouchableWithoutFeedback>
+    </SimpleLayout>
   );
 };
 

@@ -7,7 +7,7 @@ export function useTheme() {
   // const userSlice = useSelector((state) => state.user);
   // const { storeSelected } = myStoresSlices;
 
-  const mode = "light";
+  const mode = "dark";
 
   let theme = getTheme(mode);
 
