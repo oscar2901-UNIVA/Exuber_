@@ -9,35 +9,52 @@ const initialState = {
 export const createUsers = createAsyncThunk(
   "user/insertUser",
   async (data, thunkAPI) => {
-    let insert_user = await supabase.from("users").insert(data);
+    let insert_user = await supabase.from("night_club").insert(data);
     if (insert_user.error) {
       console.log("error", insert_user.error);
       return insert_user.error;
+      /* name_club: data.name_club,
+          location: data.location,
+          description: data.description,
+          instagram_username: data.instagram_username, */
     }
     return insert_user;
   }
 );
 
-export const updateUsers = createAsyncThunk(
-  "user/updateUser",
+export const signUp = createAsyncThunk(
+  "user/signUpUser",
   async (data, thunkAPI) => {
-    let update_user = await supabase.from("users")
-    .update(data)
-    .eq('id', data.id)
-    if (update_user.error) {
-      console.log("error", update_user.error);
-      return update_user.error;
+    try {
+      let signup_user = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            full_name: data.full_name,
+            username: data.username,
+            phone: data.phone,
+          },
+        },
+      });
+
+      if (signup_user.error) {
+        console.log("Error al registrar usuario:", signup_user.error.message);
+        return thunkAPI.rejectWithValue(signup_user.error.message);
+      }
+
+      return signup_user;
+    } catch (error) {
+      console.error("Error inesperado al registrar usuario:", error);
+      return thunkAPI.rejectWithValue("Error inesperado al registrar usuario");
     }
-    return update_user;
   }
 );
 
 export const deleteUsers = createAsyncThunk(
   "user/deleteUser",
   async (data, thunkAPI) => {
-    let delete_user = await supabase.from('users')
-    .delete()
-    .eq('id', data)
+    let delete_user = await supabase.from("users").delete().eq("id", data);
     if (delete_user.error) {
       console.log("error", delete_user.error);
       return delete_user.error;
@@ -58,6 +75,32 @@ export const getUsers = createAsyncThunk(
     return get_users;
   }
 );
+export const updateUsers = createAsyncThunk(
+  "user/updateUser",
+  async (data, thunkAPI) => {
+    let update_user = await supabase
+      .from("users")
+      .update(data)
+      .eq("id", data.id);
+    if (update_user.error) {
+      console.log("error", update_user.error);
+      return update_user.error;
+    }
+    return update_user;
+  }
+);
+export const login = createAsyncThunk("auth/login", async (data, thunkAPI) => {
+  const login_user = await supabase.auth.signInWithPassword({
+    email: data.email,
+    password: data.password,
+  });
+  if (login_user.error) {
+    console.log("🚀 ~ file: userSlice.js:98 ~ login ~ error:", login_user.error)
+    console.log("error", login_user.error);
+    return login_user.error;
+  }
+  return login_user;
+});
 
 export const usersSlice = createSlice({
   name: "users",
@@ -105,6 +148,19 @@ export const usersSlice = createSlice({
       state.user = action.payload.data;
     });
     builder.addCase(deleteUsers.rejected, (state, action) => {
+      state.loading = false;
+    });
+
+    builder.addCase(login.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(login.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload.data;
+    });
+
+    builder.addCase(login.rejected, (state, action) => {
       state.loading = false;
     });
   },

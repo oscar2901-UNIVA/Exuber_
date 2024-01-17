@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, TouchableWithoutFeedback, Keyboard } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import Picker from "../../components/atoms/picker/Picker";
 import TextStyled from "../../components/TextStyled";
 import { Controller, useForm } from "react-hook-form";
@@ -12,8 +19,10 @@ import { createNightclub } from "../../reduxStore/features/nightClub/nightClubSl
 import {
   createUsers,
   getUsers,
+  signUp,
 } from "../../reduxStore/features/user/userSlice";
 import SimpleLayout from "../../components/layouts/SimpleLayout";
+import { ScrollView } from "react-native";
 
 const Register = () => {
   const [userType, setUserType] = useState("normal");
@@ -21,11 +30,18 @@ const Register = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const onSubmit = (data) => {
-    /*  console.log("datos registro", data); */
-    dispatch(createUsers(data));
-    dispatch(getUsers());
-    navigation.navigate("Home");
+  const onSubmit = async (data) => {
+    try {
+      const result = await dispatch(signUp(data));
+      if (!result.error) {
+        dispatch(getUsers());
+        navigation.navigate("Home");
+      } else {
+        console.error("Error en signUp:", result.error);
+      }
+    } catch (error) {
+      console.error("Error en el registro:", error);
+    }
   };
 
   const userTypeOptions = [
@@ -35,107 +51,89 @@ const Register = () => {
 
   return (
     <SimpleLayout hasScroll={false} style={{ paddingHorizontal: 5 }}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={{ padding: 20, flex: 1 }}>
-        <Picker
-          label="Tipo de Usuario:"
-          selectedValue={userType}
-          onValueChange={(itemValue) => setUserType(itemValue)}
-          options={userTypeOptions}
-          disable
-        />
-
-        <Controller
-          control={control}
-          render={({ field }) => (
-            <InputPrimary
-              placeholder="Nombre de Usuario"
+      <ScrollView>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{ padding: 20, flex: 1 }}>
+            {/*  <Picker
+              label="Tipo de Usuario:"
+              selectedValue={userType}
+              onValueChange={(itemValue) => setUserType(itemValue)}
+              options={userTypeOptions}
+            /> */}
+            <Controller
               control={control}
+              render={({ field }) => (
+                <InputPrimary
+                  placeholder="Nombre completo"
+                  control={control}
+                  name="full_name"
+                  onChangeText={(text) => setValue("full_name", text)}
+                />
+              )}
+              name="full_name"
+              defaultValue=""
+            />
+
+            <Controller
+              control={control}
+              render={({ field }) => (
+                <InputPrimary
+                  placeholder="Correo"
+                  control={control}
+                  name="email"
+                  onChangeText={(text) => setValue("email", text)}
+                />
+              )}
+              name="email"
+              defaultValue=""
+            />
+            <Controller
+              control={control}
+              render={({ field }) => (
+                <InputPrimary
+                  placeholder="Nombre de usuario"
+                  control={control}
+                  name="username"
+                  onChangeText={(text) => setValue("username", text)}
+                />
+              )}
               name="username"
-              onChangeText={(text) => setValue("username", text)}
+              defaultValue=""
             />
-          )}
-          name="username"
-          defaultValue=""
-        />
-        <Controller
-          control={control}
-          render={({ field }) => (
-            <PasswordInput
-              placeholder="Contraseña"
+            <Controller
               control={control}
-              name="password"
-              onChangeText={(text) => setValue("password", text)}
+              render={({ field }) => (
+                <InputPrimary
+                  placeholder="Telefono celular"
+                  control={control}
+                  name="phone"
+                  onChangeText={(text) => setValue("phone", text)}
+                />
+              )}
+              name="phone"
+              defaultValue=""
             />
-          )}
-          name="password"
-          defaultValue=""
-        />
-
-        {/* {userType === "nightclub" && (
-        <View>
-          <Controller
-            control={control}
-            render={({ field }) => (
-              <InputPrimary
-                placeholder="Nombre del club"
-                control={control}
-                name="nameClub"
-                onChangeText={(text) => setValue("nameClub", text)}
-              />
-            )}
-            name="nameClub"
-            defaultValue=""
-          />
-          <Controller
-            control={control}
-            render={({ field }) => (
-              <InputPrimary
-                placeholder="Ubicación"
-                control={control}
-                name="location"
-                onChangeText={(text) => setValue("location", text)}
-              />
-            )}
-            name="location"
-            defaultValue=""
-          />
-          <Controller
-            control={control}
-            render={({ field }) => (
-              <InputPrimary
-                placeholder="Descripcion"
-                control={control}
-                name="description"
-                onChangeText={(text) => setValue("description", text)}
-              />
-            )}
-            name="description"
-            defaultValue=""
-          />
-          <Controller
-            control={control}
-            render={({ field }) => (
-              <InputPrimary
-                placeholder="Usuario de instagram"
-                control={control}
-                name="instagram_username"
-                onChangeText={(text) => setValue("instagram_username", text)}
-              />
-            )}
-            name="instagram_username"
-            defaultValue=""
-          />
-        </View>
-      )} */}
-
-        <ButtonPrimary
-          title="register"
-          text="Registrarse"
-          onPress={handleSubmit(onSubmit)}
-        />
-      </View>
-      </TouchableWithoutFeedback>
+            <Controller
+              control={control}
+              render={({ field }) => (
+                <PasswordInput
+                  placeholder="Contraseña"
+                  control={control}
+                  name="password"
+                  onChangeText={(text) => setValue("password", text)}
+                />
+              )}
+              name="password"
+              defaultValue=""
+            />
+            <ButtonPrimary
+              title="register"
+              text="Registrarse"
+              onPress={handleSubmit(onSubmit)}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+      </ScrollView>
     </SimpleLayout>
   );
 };
