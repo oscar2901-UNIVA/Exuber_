@@ -6,8 +6,6 @@ const initialState = {
   loading: false,
 };
 
-
-
 export const createNightclub = createAsyncThunk(
   "nightclubs/insertNightclub",
   async (data, thunkAPI) => {
@@ -42,8 +40,6 @@ export const nightclubsSlice = createSlice({
     builder.addCase(createNightclub.rejected, (state, action) => {
       state.loading = false;
     });
-    // holA
-    
   },
 });
 

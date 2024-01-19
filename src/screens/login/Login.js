@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Keyboard, TouchableWithoutFeedback, View, Text } from "react-native";
+import { Keyboard, TouchableWithoutFeedback, View, Text, Alert } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import PasswordInput from "../../components/atoms/inputs/PasswordInput";
 import ButtonPrimary from "../../components/atoms/buttons/ButtonPrimary";
@@ -27,28 +27,11 @@ export default function Login() {
     try {
       const resultAction = await dispatch(login(data));
 
-      console.log(
-        "🚀 ~ file: Login.js:29 ~ onSubmit ~ resultAction:",
-        resultAction
-      );
       if (resultAction.payload.message === "Invalid login credentials") {
-        console.log(
-          "🚀 ~ file: Login.js:29 ~ onSubmit ~ resultAction:",
-          resultAction.payload.message
-        );
+        Alert.alert("no se pudo iniciar sesion")
       } else {
         navigation.navigate("Home");
       }
-
-      /* if (login.fulfilled.match(resultAction)) {
-        navigation.navigate("Home");
-      } else if (login.rejected.match(resultAction)) {
-        console.error("Error en el inicio de sesión:", resultAction.error);
-        if (resultAction.error && resultAction.error.message) {
-          console.error("Error específico:", resultAction.error.message);
-        }
-        console.error("Error general:", "Error de inicio de sesión");
-      } */
     } catch (error) {
       console.error("Error en el inicio de sesión:", error);
       console.error("Error general:", "Error de inicio de sesión");
