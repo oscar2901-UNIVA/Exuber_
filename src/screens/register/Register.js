@@ -1,28 +1,21 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
-import Picker from "../../components/atoms/picker/Picker";
-import TextStyled from "../../components/TextStyled";
-import { Controller, useForm } from "react-hook-form";
-import InputPrimary from "../../components/atoms/inputs/InputPrimary";
 import { useNavigation } from "@react-navigation/native";
-import PasswordInput from "../../components/atoms/inputs/PasswordInput";
-import ButtonPrimary from "../../components/atoms/buttons/ButtonPrimary";
-import { useDispatch } from "react-redux";
-import { createNightclub } from "../../reduxStore/features/nightClub/nightClubSlice";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
-  createUsers,
-  getUsers,
-  signUp,
-} from "../../reduxStore/features/user/userSlice";
+  Keyboard,
+  ScrollView,
+  TouchableWithoutFeedback,
+  View
+} from "react-native";
+import { useDispatch } from "react-redux";
+import ButtonPrimary from "../../components/atoms/buttons/ButtonPrimary";
+import InputPrimary from "../../components/atoms/inputs/InputPrimary";
+import PasswordInput from "../../components/atoms/inputs/PasswordInput";
 import SimpleLayout from "../../components/layouts/SimpleLayout";
-import { ScrollView } from "react-native";
+import {
+  getUsers,
+  signUp
+} from "../../reduxStore/features/user/userSlice";
 
 const Register = () => {
   const [userType, setUserType] = useState("normal");
@@ -44,10 +37,6 @@ const Register = () => {
     }
   };
 
-  const userTypeOptions = [
-    { label: "Usuario Normal", value: "normal" },
-    { label: "Night Club", value: "nightclub" },
-  ];
 
   return (
     <SimpleLayout hasScroll={false} style={{ paddingHorizontal: 5 }}>
@@ -62,7 +51,7 @@ const Register = () => {
             /> */}
             <Controller
               control={control}
-              render={({ field }) => (
+              render={() => (
                 <InputPrimary
                   placeholder="Nombre completo"
                   control={control}
@@ -76,7 +65,7 @@ const Register = () => {
 
             <Controller
               control={control}
-              render={({ field }) => (
+              render={() => (
                 <InputPrimary
                   placeholder="Correo"
                   control={control}
@@ -89,7 +78,7 @@ const Register = () => {
             />
             <Controller
               control={control}
-              render={({ field }) => (
+              render={() => (
                 <InputPrimary
                   placeholder="Nombre de usuario"
                   control={control}
@@ -102,7 +91,7 @@ const Register = () => {
             />
             <Controller
               control={control}
-              render={({ field }) => (
+              render={() => (
                 <InputPrimary
                   placeholder="Telefono celular"
                   control={control}
@@ -115,7 +104,7 @@ const Register = () => {
             />
             <Controller
               control={control}
-              render={({ field }) => (
+              render={() => (
                 <PasswordInput
                   placeholder="Contraseña"
                   control={control}

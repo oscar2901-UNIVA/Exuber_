@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+/* import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import TextStyled from "../../components/TextStyled";
@@ -54,6 +54,44 @@ const Home = () => {
       </SimpleLayout>
     </>
   );
+};
+
+export default Home;
+ */
+import { useDispatch, useSelector } from "react-redux";
+import {
+  checkNightClubAssociation,
+  selectHasNightClub,
+} from "../../reduxStore/features/profile/profileSlice";
+import { useEffect, useState } from "react";
+import { View } from "react-native";
+import { unwrapResult } from "@reduxjs/toolkit"; // Importa unwrapResult
+import HomeNightClub from "./HomeNightClub";
+import HomeUser from "./HomeUser";
+
+const Home = () => {
+  const dispatch = useDispatch();
+  const hasNightClub = useSelector(selectHasNightClub);
+  const [isNightClub, setIsNightClub] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const resultAction = await dispatch(checkNightClubAssociation());
+        const result = unwrapResult(resultAction);
+        console.log("🚀 ~ file: Home.js:19 ~ fetchData ~ result", result);
+        setIsNightClub(result);
+      } catch (error) {
+        console.error("Error al obtener la información:", error);
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
+
+  console.log("🚀 ~ file: Home.js:29 ~ Home ~ hasNightClub:", hasNightClub);
+
+  return <View>{isNightClub ? <HomeNightClub /> : <HomeUser />}</View>;
 };
 
 export default Home;

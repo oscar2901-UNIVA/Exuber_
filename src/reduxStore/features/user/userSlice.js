@@ -13,10 +13,6 @@ export const createUsers = createAsyncThunk(
     if (insert_user.error) {
       console.log("error", insert_user.error);
       return insert_user.error;
-      /* name_club: data.name_club,
-          location: data.location,
-          description: data.description,
-          instagram_username: data.instagram_username, */
     }
     return insert_user;
   }
@@ -95,7 +91,6 @@ export const login = createAsyncThunk("auth/login", async (data, thunkAPI) => {
     password: data.password,
   });
   if (login_user.error) {
-    console.log("🚀 ~ file: userSlice.js:98 ~ login ~ error:", login_user.error)
     console.log("error", login_user.error);
     return login_user.error;
   }
@@ -107,6 +102,19 @@ export const usersSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder.addCase(login.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(login.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload.data;
+    });
+
+    builder.addCase(login.rejected, (state, action) => {
+      state.loading = false;
+    });
+
     builder.addCase(createUsers.pending, (state, action) => {
       state.loading = true;
     });
@@ -148,19 +156,6 @@ export const usersSlice = createSlice({
       state.user = action.payload.data;
     });
     builder.addCase(deleteUsers.rejected, (state, action) => {
-      state.loading = false;
-    });
-
-    builder.addCase(login.pending, (state) => {
-      state.loading = true;
-    });
-
-    builder.addCase(login.fulfilled, (state, action) => {
-      state.loading = false;
-      state.user = action.payload.data;
-    });
-
-    builder.addCase(login.rejected, (state, action) => {
       state.loading = false;
     });
   },
